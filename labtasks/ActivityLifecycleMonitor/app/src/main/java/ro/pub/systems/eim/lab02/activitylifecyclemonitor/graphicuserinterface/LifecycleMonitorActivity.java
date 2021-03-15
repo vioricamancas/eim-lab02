@@ -1,5 +1,6 @@
 package ro.pub.systems.eim.lab02.activitylifecyclemonitor.graphicuserinterface;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 
@@ -52,6 +54,8 @@ public class LifecycleMonitorActivity extends AppCompatActivity {
 
     }
 
+    private final String monitorTag = "activitylifecyclemonitor";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +65,95 @@ public class LifecycleMonitorActivity extends AppCompatActivity {
         okButton.setOnClickListener(buttonClickListener);
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(buttonClickListener);
+        if (savedInstanceState == null || savedInstanceState.isEmpty())
+            Log.d(Constants.TAG, "onCreate() method was invoked without a previous state");
+        else {
+            Log.d(monitorTag, "onCreate() method was invoked with a previous state");
+            // restore state in create
+            if (savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT) != null) {
+                EditText usernameEditText= (EditText)findViewById(R.id.username_edit_text);
+                usernameEditText.setText(savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT));
+            }
+            if (savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT) != null) {
+                EditText pass = findViewById(R.id.password_edit_text);
+                pass.setText(savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT));
+            }
+            Boolean checked = savedInstanceState.getBoolean(Constants.REMEMBER_ME_CHECKBOX);
+            if (checked != null) {
+                CheckBox checkBox = findViewById(R.id.remember_me_checkbox);
+                checkBox.setChecked(checked);
+            }
+        }
 
-        Log.d(Constants.TAG, "onCreate() method was invoked without a previous state");
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        CheckBox checkBox = findViewById(R.id.remember_me_checkbox);
+        if (checkBox.isChecked()) {
+            outState.putBoolean(Constants.REMEMBER_ME_CHECKBOX, checkBox.isChecked());
+            EditText username = findViewById(R.id.username_edit_text);
+            EditText password = findViewById(R.id.password_edit_text);
+            Log.d(monitorTag, "saving credentials" + username.getText() + " " + password.getText());
+            outState.putString(Constants.USERNAME_EDIT_TEXT, username.getText().toString());
+            outState.putString(Constants.PASSWORD_EDIT_TEXT, password.getText().toString());
+        }
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT) != null) {
+            EditText usernameEditText= (EditText)findViewById(R.id.username_edit_text);
+            usernameEditText.setText(savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT));
+        }
+        if (savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT) != null) {
+            EditText pass = findViewById(R.id.password_edit_text);
+            pass.setText(savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT));
+        }
+        Boolean checked = savedInstanceState.getBoolean(Constants.REMEMBER_ME_CHECKBOX);
+        if (checked != null) {
+            CheckBox checkBox = findViewById(R.id.remember_me_checkbox);
+            checkBox.setChecked(checked);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(monitorTag, "onRestart method was invoked");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(monitorTag, "onStart method was invoked");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(monitorTag, "onResume method was invoked");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(monitorTag, "onPause method was invoked");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(monitorTag, "onStop method was invoked");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(monitorTag, "onDestroy method was invoked");
+    }
 }
